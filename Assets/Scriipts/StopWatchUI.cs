@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Timer : MonoBehaviour
+public class StopWatchUI : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
     [SerializeField] private float _stopWatch = 0f;
