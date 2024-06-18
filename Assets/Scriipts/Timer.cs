@@ -5,7 +5,7 @@ using UnityEngine.UI;
 public class Timer : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
-    [SerializeField] private float _timer = 0f;
+    [SerializeField] private float _stopWatch = 0f;
     [SerializeField] private Text _text;
 
     private bool _isWork = true;
@@ -13,7 +13,7 @@ public class Timer : MonoBehaviour
 
     private void Start()
     {
-        UpdateTimerText();
+        UpdateStopwatchText();
     }
 
     private void Update()
@@ -22,7 +22,7 @@ public class Timer : MonoBehaviour
         {
             if (_coroutine == null)
             {
-                _coroutine = StartCoroutine(OnTimer());
+                _coroutine = StartCoroutine(OnStopwatch());
             }
             else
             {
@@ -32,18 +32,18 @@ public class Timer : MonoBehaviour
         }
     }
 
-    private IEnumerator OnTimer()
+    private IEnumerator OnStopwatch()
     {
         while (_isWork)
         {
-            ++_timer;
-            UpdateTimerText();
+            ++_stopWatch;
+            UpdateStopwatchText();
             yield return new WaitForSecondsRealtime(_stepTime);
         }
     }
 
-    private void UpdateTimerText()
+    private void UpdateStopwatchText()
     {
-        _text.text = _timer.ToString("");
+        _text.text = _stopWatch.ToString("");
     }
 }
