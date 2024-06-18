@@ -2,10 +2,10 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class StopWatchUI : MonoBehaviour
+public class —ounter : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
-    [SerializeField] private float _stopWatch = 0f;
+    [SerializeField] private float _watch = 0f;
     [SerializeField] private Text _text;
 
     private bool _isWork = true;
@@ -13,7 +13,7 @@ public class StopWatchUI : MonoBehaviour
 
     private void Start()
     {
-        UpdateStopwatchText();
+        Update—ounterText();
     }
 
     private void Update()
@@ -22,7 +22,7 @@ public class StopWatchUI : MonoBehaviour
         {
             if (_coroutine == null)
             {
-                _coroutine = StartCoroutine(OnStopwatch());
+                _coroutine = StartCoroutine(OnWatch());
             }
             else
             {
@@ -32,18 +32,18 @@ public class StopWatchUI : MonoBehaviour
         }
     }
 
-    private IEnumerator OnStopwatch()
+    private IEnumerator OnWatch()
     {
         while (_isWork)
         {
-            ++_stopWatch;
-            UpdateStopwatchText();
+            ++_watch;
+            Update—ounterText();
             yield return new WaitForSecondsRealtime(_stepTime);
         }
     }
 
-    private void UpdateStopwatchText()
+    private void Update—ounterText()
     {
-        _text.text = _stopWatch.ToString("");
+        _text.text = _watch.ToString("");
     }
 }
