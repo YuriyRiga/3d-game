@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
@@ -5,16 +6,11 @@ using UnityEngine.UI;
 public class —ounter : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
-    [SerializeField] private float _watch = 0f;
-    [SerializeField] private Text _text;
+    [SerializeField] private float _stepsCount = 0f;
 
+    public event Action<float> StepCountChanged;
     private bool _isWork = true;
     private Coroutine _coroutine;
-
-    private void Start()
-    {
-        Update—ounterText();
-    }
 
     private void Update()
     {
@@ -36,14 +32,9 @@ public class —ounter : MonoBehaviour
     {
         while (_isWork)
         {
-            ++_watch;
-            Update—ounterText();
+            ++_stepsCount;
+            StepCountChanged.Invoke(_stepsCount);
             yield return new WaitForSecondsRealtime(_stepTime);
         }
-    }
-
-    private void Update—ounterText()
-    {
-        _text.text = _watch.ToString("");
     }
 }
