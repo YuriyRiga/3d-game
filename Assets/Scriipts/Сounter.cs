@@ -1,16 +1,16 @@
 using System;
 using System.Collections;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Ñounter : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
     [SerializeField] private float _stepsCount = 0f;
 
-    public event Action<float> StepCountChanged;
-    private bool _isWork = true;
     private Coroutine _coroutine;
+    private bool _isWork = true;
+
+    public event Action<float> StepCountChanged;
 
     private void Update()
     {
@@ -30,11 +30,13 @@ public class Ñounter : MonoBehaviour
 
     private IEnumerator OnWatch()
     {
+        var delay = new WaitForSecondsRealtime(_stepTime);
+
         while (_isWork)
         {
             ++_stepsCount;
-            StepCountChanged.Invoke(_stepsCount);
-            yield return new WaitForSecondsRealtime(_stepTime);
+            StepCountChanged?.Invoke(_stepsCount);
+            yield return delay;
         }
     }
 }
