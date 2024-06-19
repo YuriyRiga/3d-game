@@ -3,7 +3,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class Ñounter : MonoBehaviour
+public class Ð¡ounter : MonoBehaviour
 {
     [SerializeField] private float _stepTime = 0.5f;
     [SerializeField] private float _stepsCount = 0f;
