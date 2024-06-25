@@ -9,11 +9,11 @@ public class Spawner : MonoBehaviour
     [SerializeField] private int _poolCapacity = 5;
     [SerializeField] private int _poolMaxSize = 5;
 
-    private ObjectPool<GameObject> _pool;
+    private ObjectPool<Cube> _pool;
 
     private void Awake()
     {
-        _pool = new ObjectPool<GameObject>(
+        _pool = new ObjectPool<Cube>(
             createFunc: () => InstantiateAndSetup(),
             actionOnGet: (obj) => ActionOnGet(obj),
             actionOnRelease: (obj) => obj.SetActive(false),
@@ -23,10 +23,10 @@ public class Spawner : MonoBehaviour
             maxSize: _poolMaxSize);
     }
 
-    private GameObject InstantiateAndSetup()
+    private Cube InstantiateAndSetup()
     {
-        var obj = Instantiate(_prefab);
-        var collisionHandler = obj.GetComponent<CollisionHandler>();
+        Cube obj = Instantiate(_prefab).GetComponent<Cube>(); ;
+        var collisionHandler = obj?.GetComponent<CollisionHandler>();
 
         if (collisionHandler != null)
         {
@@ -36,7 +36,7 @@ public class Spawner : MonoBehaviour
         return obj;
     }
 
-    private void ActionOnGet(GameObject obj)
+    private void ActionOnGet(Cube obj)
     {
         obj.transform.position = _startPoint.transform.position;
         obj.GetComponent<Renderer>().material.color = Color.white;

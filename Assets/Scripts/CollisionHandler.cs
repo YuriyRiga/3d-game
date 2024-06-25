@@ -7,11 +7,12 @@ public class CollisionHandler : MonoBehaviour
     [SerializeField] private LayerMask platformLayer;
     [SerializeField] private float minTime = 2f;
     [SerializeField] private float maxTime = 5f;
+    [SerializeField] private Cube _cube;
 
-    private ObjectPool<GameObject> _objectPool;
+    private ObjectPool<Cube> _objectPool;
     private bool _isReturningToPool = false;
 
-    public void SetPool(ObjectPool<GameObject> objectPool)
+    public void SetPool(ObjectPool<Cube> objectPool)
     {
         _objectPool = objectPool;
     }
@@ -31,7 +32,7 @@ public class CollisionHandler : MonoBehaviour
         float waitTime = Random.Range(minTime, maxTime);
         yield return new WaitForSeconds(waitTime);
 
-        _objectPool.Release(gameObject);
+        _objectPool?.Release(_cube);
         _isReturningToPool = false;
     }
 }
