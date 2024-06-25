@@ -46,10 +46,10 @@ public class Spawner : MonoBehaviour
 
     private void Start()
     {
-        InvokeRepeating(nameof(GetSphere), 0.0f, _repeatRate);
+        InvokeRepeating(nameof(GetCube), 0.0f, _repeatRate);
     }
 
-    private void GetSphere()
+    private void GetCube()
     {
         _pool.Get();
     }
