@@ -1,56 +1,81 @@
 using UnityEngine;
 using UnityEngine.Pool;
+using System.Collections;
 
-public class Spawner : MonoBehaviour
+public abstract class Spawner<T> : MonoBehaviour where T : Objects
 {
-    [SerializeField] private GameObject _prefab;
-    [SerializeField] private GameObject _startPoint;
+    [SerializeField] private T _prefab;
     [SerializeField] private float _repeatRate = 1f;
     [SerializeField] private int _poolCapacity = 5;
     [SerializeField] private int _poolMaxSize = 5;
 
-    private ObjectPool<Cube> _pool;
+    private ObjectPool<T> _pool;
 
     private void Awake()
     {
-        _pool = new ObjectPool<Cube>(
-            createFunc: () => InstantiateAndSetup(),
-            actionOnGet: (obj) => ActionOnGet(obj),
-            actionOnRelease: (obj) => obj.SetActive(false),
-            actionOnDestroy: (obj) => Destroy(obj),
+        _pool = new ObjectPool<T>(
+            createFunc: () => Instantiate(),
+            actionOnGet: (obj) => InitializePool(obj),
+            actionOnRelease: (obj) => Disable(obj),
+            actionOnDestroy: (obj) => Unsubscribe(obj),
             collectionCheck: true,
             defaultCapacity: _poolCapacity,
             maxSize: _poolMaxSize);
     }
 
-    private Cube InstantiateAndSetup()
+    private T Instantiate()
     {
-        Cube obj = Instantiate(_prefab).GetComponent<Cube>(); ;
-        var collisionHandler = obj?.GetComponent<CollisionHandler>();
-
-        if (collisionHandler != null)
-        {
-            collisionHandler.SetPool(_pool);
-        }
-
+        T obj = Instantiate(_prefab);
+        Subscribe(obj);
         return obj;
     }
-
-    private void ActionOnGet(Cube obj)
+    private void Subscribe(T obj)
     {
-        obj.transform.position = _startPoint.transform.position;
-        obj.GetComponent<Renderer>().material.color = Color.white;
-        obj.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        obj.SetActive(true);
+        obj.ObjectDisable += OnObjectsDisable;
     }
 
-    private void Start()
+    private void Unsubscribe(T obj)
     {
-        InvokeRepeating(nameof(GetCube), 0.0f, _repeatRate);
+        obj.ObjectDisable -= OnObjectsDisable;
+        Destroy(obj.gameObject);
     }
 
-    private void GetCube()
+    protected virtual void OnObjectsDisable(Objects objectsSpawn)
+    {
+        if (objectsSpawn != null)
+        {
+            Release(objectsSpawn as T);
+        }
+    }
+
+    protected virtual void InitializePool(T obj)
+    {
+        obj.gameObject.SetActive(true);
+    }
+
+    private void Disable(T item)
+    {
+        item.gameObject.SetActive(false);
+    }
+
+    private void Release(T item)
+    {
+        _pool.Release(item);
+    }
+
+    protected virtual void ActivateObject()
     {
         _pool.Get();
+    }
+
+    protected virtual IEnumerator SpawnCouldown()
+    {
+        var delay = new WaitForSeconds(_repeatRate);
+
+        while (gameObject.activeSelf)
+        {
+            ActivateObject();
+            yield return delay;
+        }
     }
 }
