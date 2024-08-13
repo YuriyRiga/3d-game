@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
+using System;
 
 public abstract class Spawner<T> : MonoBehaviour where T : Objects
 {
@@ -27,8 +28,10 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     {
         T obj = Instantiate(_prefab);
         Subscribe(obj);
+        EventManager.Instance.RaiseObjectCreated();
         return obj;
     }
+
     private void Subscribe(T obj)
     {
         obj.ObjectDisable += OnObjectsDisable;
@@ -51,11 +54,13 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     protected virtual void InitializePool(T obj)
     {
         obj.gameObject.SetActive(true);
+        EventManager.Instance.RaiseObjectActivated(true);
     }
 
     private void Disable(T item)
     {
         item.gameObject.SetActive(false);
+        EventManager.Instance.RaiseObjectActivated(false);
     }
 
     private void Release(T item)
@@ -66,6 +71,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     protected virtual void ActivateObject()
     {
         _pool.Get();
+        EventManager.Instance.RaiseObjectSpawned();
     }
 
     protected virtual IEnumerator SpawnCouldown()

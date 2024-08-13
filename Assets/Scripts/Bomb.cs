@@ -25,7 +25,6 @@ public class Bomb : Objects
 
     private void StartFadeOut()
     {
-        Debug.Log("началось");
         StartCoroutine(FadeOutCoroutine());
     }
 
