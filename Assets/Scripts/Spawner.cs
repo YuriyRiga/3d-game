@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
+using System;
 
 public abstract class Spawner<T> : MonoBehaviour where T : Objects
 {
@@ -10,6 +11,10 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     [SerializeField] private int _poolMaxSize = 5;
 
     private ObjectPool<T> _pool;
+
+    public event Action ObjectCreated;
+    public event Action ObjectSpawn;
+    public event Action<int> ObjectActivated;
 
     private void Awake()
     {
@@ -23,11 +28,16 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
             maxSize: _poolMaxSize);
     }
 
+    public int GetNumberActiveObject()
+    {
+        return _pool.CountActive;
+    }
+
     private T Instantiate()
     {
         T obj = Instantiate(_prefab);
         Subscribe(obj);
-        EventManager.Instance.RaiseObjectCreated();
+        ObjectCreated?.Invoke();
         return obj;
     }
 
@@ -53,13 +63,11 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     protected virtual void InitializeObject(T obj)
     {
         obj.gameObject.SetActive(true);
-        EventManager.Instance.RaiseObjectActivated(true);
     }
 
     private void Disable(T item)
     {
         item.gameObject.SetActive(false);
-        EventManager.Instance.RaiseObjectActivated(false);
     }
 
     private void Release(T item)
@@ -70,7 +78,8 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     protected void ActivateObject()
     {
         _pool.Get();
-        EventManager.Instance.RaiseObjectSpawned();
+        ObjectSpawn?.Invoke();
+        ObjectActivated?.Invoke(GetNumberActiveObject());
     }
 
     protected IEnumerator SpawnCouldown()
