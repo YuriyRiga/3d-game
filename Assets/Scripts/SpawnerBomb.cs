@@ -2,8 +2,6 @@
 
 public class SpawnerBomb : Spawner<Bomb>
 {
-    [SerializeField] private Cube _cube;
-
     private Transform _position;
 
     public void Create(Objects objects)
@@ -11,9 +9,10 @@ public class SpawnerBomb : Spawner<Bomb>
         _position = objects.transform;
         ActivateObject();
     }
-    protected override void InitializePool(Bomb obj)
+
+    protected override void InitializeObject(Bomb obj)
     {
         obj.transform.position = _position.transform.position;
-        base.InitializePool(obj);
+        base.InitializeObject(obj);
     }
 }

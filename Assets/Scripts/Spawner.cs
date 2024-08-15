@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.Pool;
 using System.Collections;
-using System;
 
 public abstract class Spawner<T> : MonoBehaviour where T : Objects
 {
@@ -16,7 +15,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
     {
         _pool = new ObjectPool<T>(
             createFunc: () => Instantiate(),
-            actionOnGet: (obj) => InitializePool(obj),
+            actionOnGet: (obj) => InitializeObject(obj),
             actionOnRelease: (obj) => Disable(obj),
             actionOnDestroy: (obj) => Unsubscribe(obj),
             collectionCheck: true,
@@ -51,7 +50,7 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
         }
     }
 
-    protected virtual void InitializePool(T obj)
+    protected virtual void InitializeObject(T obj)
     {
         obj.gameObject.SetActive(true);
         EventManager.Instance.RaiseObjectActivated(true);
@@ -68,13 +67,13 @@ public abstract class Spawner<T> : MonoBehaviour where T : Objects
         _pool.Release(item);
     }
 
-    protected virtual void ActivateObject()
+    protected void ActivateObject()
     {
         _pool.Get();
         EventManager.Instance.RaiseObjectSpawned();
     }
 
-    protected virtual IEnumerator SpawnCouldown()
+    protected IEnumerator SpawnCouldown()
     {
         var delay = new WaitForSeconds(_repeatRate);
 

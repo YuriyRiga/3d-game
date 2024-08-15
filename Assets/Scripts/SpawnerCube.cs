@@ -10,12 +10,12 @@ public class SpawnerCube : Spawner<Cube>
         StartCoroutine(SpawnCouldown());
     }
 
-    protected override void InitializePool(Cube obj)
+    protected override void InitializeObject(Cube obj)
     {
         obj.transform.position = _startPoint.transform.position;
         obj.GetComponent<Renderer>().material.color = Color.white;
         obj.GetComponent<Rigidbody>().velocity = Vector3.zero;
-        base.InitializePool(obj);
+        base.InitializeObject(obj);
     }
 
     protected override void OnObjectsDisable(Objects objectsSpawn)
